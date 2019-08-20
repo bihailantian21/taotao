@@ -12,12 +12,6 @@
 
 
 
-
-
-
-    <!-- 配置dispatcherservlet -->
-    <!-- url的拦截形式 -->
-    <!-- 加载springmvc.xml -->
     <!-- 解决post乱码 -->
     <filter>
         <filter-name>CharacterEncodingFilter</filter-name>
@@ -33,7 +27,12 @@
     </filter-mapping>
 
 
-    <!-- springmvc的前端控制器 -->
+    <!-- 配置dispatcherservlet -->
+    <!-- url的拦截形式 -->
+    <!-- 加载springmvc.xml -->
+
+
+    <!-- springmvc的前端控制器，拦截所有请求 -->
     <servlet>
         <servlet-name>taotao-manager-web</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -44,7 +43,6 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>taotao-manager-web</servlet-name>
         <url-pattern>/</url-pattern>

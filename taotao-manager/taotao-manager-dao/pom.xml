@@ -46,14 +46,14 @@
             <artifactId>mybatis-spring</artifactId>
         </dependency>
         <!-- mybatis分页相关的 -->
-        <!--<dependency>-->
-            <!--<groupId>com.github.miemiedev</groupId>-->
-            <!--<artifactId>mybatis-paginator</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.github.pagehelper</groupId>-->
-            <!--<artifactId>pagehelper</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.github.miemiedev</groupId>
+            <artifactId>mybatis-paginator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+        </dependency>
         <!-- MySql -->
         <dependency>
             <groupId>mysql</groupId>
