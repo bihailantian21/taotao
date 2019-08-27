@@ -1,13 +1,12 @@
 package com.taotao.controller;
 
 import com.taotao.common.pojo.EasyUIDataGridResult;
+import com.taotao.common.pojo.TaotaoResult;
+import com.taotao.pojo.TbItem;
 import com.taotao.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class ItemController {
@@ -25,7 +24,6 @@ public class ItemController {
      */
     @RequestMapping(value = "/item/list",method = RequestMethod.GET)
     @ResponseBody
-
     public EasyUIDataGridResult getItemList(Integer page,Integer rows) {
         //1.引入服务
         //2.注入服务
@@ -37,5 +35,61 @@ public class ItemController {
          * 		return result;
          */
     }
+
+    /**
+     * 请求的url：/item/save
+     *
+     * 参数：TbItemitem,String desc
+     *
+     * 返回值：TaotaoResult
+     * /rest/page/item-edit
+     */
+    @RequestMapping("/item/save")
+    @ResponseBody
+    public TaotaoResult saveItem(TbItem item, String desc) {
+        System.out.println("controllerXXXXX"+item.getTitle());
+        System.out.println("controllerXXXXX"+item.getBarcode());
+        System.out.println("controllerXXXXX"+desc);
+        TaotaoResult result = itemService.addItem(item, desc);
+        return result;
+    }
+
+    @RequestMapping("/rest/page/item-edit")
+    @ResponseBody
+    public TaotaoResult updateItem(TbItem item, String desc) {
+        System.out.println("controllerupdateXXXXX"+item.getId());
+        System.out.println("controllerupdateXXXXX"+item.getTitle());
+        System.out.println("controllerupdateXXXXX"+item.getBarcode());
+        System.out.println("controllerupdateXXXXX"+desc);
+        TaotaoResult result = itemService.updateItem(item,desc);
+        return result;
+    }
+
+    @RequestMapping("/rest/item/delete")
+    @ResponseBody
+    public TaotaoResult deleteItem(@RequestParam(value = "ids",defaultValue = "0")Long itemId) {
+        System.out.println("deleteitem"+itemId);
+
+        TaotaoResult result = itemService.deleteItem(itemId);
+        return result;
+    }
+
+//    @RequestMapping("/item/instock")
+//    @ResponseBody
+//    public TaotaoResult saveItem(TbItem item, String desc) {
+//        TaotaoResult result = itemService.addItem(item, desc);
+//        return result;
+//    }
+//
+//    @RequestMapping("/item/reshelf")
+//    @ResponseBody
+//    public TaotaoResult saveItem(TbItem item, String desc) {
+//        TaotaoResult result = itemService.addItem(item, desc);
+//        return result;
+//    }
+
+
+
+
 
 }

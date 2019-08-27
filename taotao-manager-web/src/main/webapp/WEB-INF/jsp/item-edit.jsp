@@ -96,10 +96,13 @@
 				"params": ps
 			});
 		});
+        //把json对象转换成字符串
 		paramJson = JSON.stringify(paramJson);
-		
+
+        //ajax的post方式提交表单
 		$("#itemeEditForm [name=itemParams]").val(paramJson);
-		
+
+        //$("#itemAddForm").serialize()将表单序列号为key-value形式的字符串
 		$.post("/rest/item/update",$("#itemeEditForm").serialize(), function(data){
 			if(data.status == 200){
 				$.messager.alert('提示','修改商品成功!','info',function(){
