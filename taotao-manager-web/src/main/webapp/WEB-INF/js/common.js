@@ -161,6 +161,7 @@ var TT = TAOTAO = {
      * 
      * 
      */
+
     createWindow : function(params){
     	$("<div>").css({padding:"5px"}).window({
     		width : params.width?params.width:"80%",

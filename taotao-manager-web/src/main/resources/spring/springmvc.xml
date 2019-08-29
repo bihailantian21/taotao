@@ -27,12 +27,6 @@
         <property name="suffix" value=".jsp" />
     </bean>
 
-    <!-- 引用dubbo服务 -->
-    <dubbo:application name="taotao-manager-web"/>
-    <dubbo:registry protocol="zookeeper" address="192.168.173.148:2181"/>
-    <dubbo:reference interface="com.taotao.service.TestService" id="testService" />
-    <dubbo:reference interface="com.taotao.service.ItemService" id="itemService" />
-    <dubbo:reference interface="com.taotao.service.ItemCatService" id="itemCatService" />
 
     <!--配置静态资源映射 -->
     <!--指定/WEB-INF/js   /WEB_INF/css 下的所有的静态资源包括子目录下的静态资源都不被拦截-->
@@ -49,6 +43,15 @@
         <!-- 设定文件上传的最大值5MB，5*1024*1024 -->
         <property name="maxUploadSize" value="5242880"></property>
     </bean>
+
+    <!-- 引用dubbo服务 -->
+    <dubbo:application name="taotao-manager-web"/>
+    <dubbo:registry protocol="zookeeper" address="192.168.173.148:2181"/>
+    <dubbo:reference interface="com.taotao.service.TestService" id="testService" />
+    <dubbo:reference interface="com.taotao.service.ItemService" id="itemService" />
+    <dubbo:reference interface="com.taotao.service.ItemCatService" id="itemCatService" />
+    <dubbo:reference interface="com.taotao.content.service.ContentCategoryService" id="contentCategoryService" />
+    <dubbo:reference interface="com.taotao.content.service.ContentService" id="contentService" />
 
 
 
