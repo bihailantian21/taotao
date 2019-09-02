@@ -46,6 +46,7 @@
     <activemq.version>5.13.0</activemq.version>
     <freemarker.version>2.3.23</freemarker.version>
     <quartz.version>2.2.2</quartz.version>
+    <jmail.version>1.5.6</jmail.version>
   </properties>
 
   <!-- 就是管理版本的标签   其下的dependencies标签只是版本的管理 并不依赖jar-->
@@ -235,6 +236,13 @@
         <groupId>org.freemarker</groupId>
         <artifactId>freemarker</artifactId>
         <version>${freemarker.version}</version>
+      </dependency>
+
+      <!--JMail组件-->
+      <dependency>
+        <groupId>com.sun.mail</groupId>
+        <artifactId>javax.mail</artifactId>
+        <version>${jmail.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

@@ -43,6 +43,13 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>com.taotao</groupId>
+            <artifactId>taotao-search-interface</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -147,7 +154,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-
 
 
 
