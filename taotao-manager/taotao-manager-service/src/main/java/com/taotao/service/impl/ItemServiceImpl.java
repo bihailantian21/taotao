@@ -12,10 +12,17 @@ import com.taotao.pojo.TbItemDesc;
 import com.taotao.pojo.TbItemExample;
 import com.taotao.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import javax.jms.*;
 import java.util.Date;
 import java.util.List;
+
+
+
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -24,6 +31,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     private TbItemDescMapper itemDescMapper;
+
+    @Autowired
+    private JmsTemplate jmsTemplate;
+    @Resource(name="itemAddTopic")
+    private Destination destination;
 
     @Override
     public EasyUIDataGridResult getItemList(Integer page, Integer rows) {
@@ -66,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
          * 7、TaotaoResult.ok()
          */
             // 1、生成商品id
-            long itemId = IDUtils.genItemId();
+            final long itemId = IDUtils.genItemId();
             // 2、补全TbItem对象的属性
             item.setId(itemId);
             //商品状态，1-正常，2-下架，3-删除
@@ -85,9 +97,38 @@ public class ItemServiceImpl implements ItemService {
             itemDesc.setUpdated(date);
             // 6、向商品描述表插入数据
             itemDescMapper.insert(itemDesc);
+
+
+            //发送activemq消息
+        //需要在商品的添加/修改，删除的时候，同步索引库。将数据从数据库中查询出来导入到索引库更新。
+        //消息的发送方为：所在工程taotao-manager-service
+        //功能分析：
+        //当商品添加完成后发送一个TextMessage，包含一个商品id即可。
+        //接收端接收到商品id通过数据库查询到商品的信息（搜索的结果商品的信息）再同步索引库。
+        //消息的接收方为：所在工程taotao-search-service
+        //
+        //两个工程都需要依赖activmq:
+
+        //第一步：初始化一个spring容器
+        //第二步：从容器中获得JMSTemplate对象。
+        //第三步：从容器中获得一个Destination对象
+        //第四步：使用JMSTemplate对象发送消息，需要知道Destination
+        		jmsTemplate.send(destination,new MessageCreator() {
+
+        			@Override
+        			public Message createMessage(Session session) throws JMSException {
+        				TextMessage textMessage = session.createTextMessage(itemId+"");
+        				return textMessage;
+        			}
+        		});
+
             // 7、TaotaoResult.ok()
             return TaotaoResult.ok();
     }
+
+
+
+
 
     @Override
     public TaotaoResult updateItem(TbItem item, String desc) {

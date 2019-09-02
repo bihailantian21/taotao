@@ -102,6 +102,22 @@
             <artifactId>zkclient</artifactId>
         </dependency>
 
+        <!--activemq -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-all</artifactId>
+        </dependency>
+
+        <!--JMail组件-->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>javax.mail</groupId>-->
+            <!--<artifactId>mail</artifactId>-->
+            <!--<version>1.4</version>-->
+        <!--</dependency>-->
 
 
     </dependencies>
