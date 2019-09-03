@@ -119,6 +119,16 @@
             <!--<version>1.4</version>-->
         <!--</dependency>-->
 
+        <!-- Redis客户端 -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+        </dependency>
+
+
+
+
+
 
     </dependencies>
 

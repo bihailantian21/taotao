@@ -5,13 +5,17 @@ import com.github.pagehelper.PageInfo;
 import com.taotao.common.pojo.EasyUIDataGridResult;
 import com.taotao.common.pojo.TaotaoResult;
 import com.taotao.common.util.IDUtils;
+import com.taotao.common.util.JsonUtils;
+import com.taotao.jedis.service.JedisClient;
 import com.taotao.mapper.TbItemDescMapper;
 import com.taotao.mapper.TbItemMapper;
 import com.taotao.pojo.TbItem;
 import com.taotao.pojo.TbItemDesc;
 import com.taotao.pojo.TbItemExample;
 import com.taotao.service.ItemService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
@@ -36,6 +40,15 @@ public class ItemServiceImpl implements ItemService {
     private JmsTemplate jmsTemplate;
     @Resource(name="itemAddTopic")
     private Destination destination;
+
+    @Autowired
+    private JedisClient jedisClient;
+    @Value("${ITEM_INFO}")
+    private String ITEM_INFO;
+    @Value("${ITEM_EXPIRE}")
+    private Integer ITEM_EXPIRE;
+
+
 
     @Override
     public EasyUIDataGridResult getItemList(Integer page, Integer rows) {
@@ -160,4 +173,103 @@ public class ItemServiceImpl implements ItemService {
         itemDescMapper.deleteByPrimaryKey(itemId);
         return TaotaoResult.ok();
     }
+/*
+    @Override
+    public TbItem getItemById(long itemId) {
+        TbItem tbItem = itemMapper.selectByPrimaryKey(itemId);
+        return tbItem;
+    }
+
+    @Override
+    public TbItemDesc getItemDescById(long itemId) {
+        TbItemDesc tbItemDesc = itemDescMapper.selectByPrimaryKey(itemId);
+        return tbItemDesc;
+    }*/
+
+
+    //添加缓存
+
+    /**
+     * 使用redis做缓存。
+     *
+     * 业务逻辑：
+     * 1、根据商品id 到缓存中查询。
+     * 2、查到缓存，直接返回。
+     * 3、查不到，查询数据库。
+     * 4、把数据放到缓存中。
+     * 5、返回数据。
+     *
+     * 缓存中缓存热点数据，提高缓存的使用率。需要设置缓存的有效期expire。一般是一天的时间，可以根据实际情况调整。
+     *
+     * 需要使用String类型来保存商品数据。
+     * 可以加前缀方法对redis中的key进行归类。
+     * 例如：key:
+     * ITEM_INFO:123456:BASE
+     * ITEM_INFO:123456:DESC
+     *
+     * 作用：方便进行管理。
+     *
+     *
+     * 如果把二维表保存到redis中:
+     * 1、表名就是第一层
+     * 2、主键是第二层
+     * 3、字段名第三层
+     * 三层使用“:”分隔作为key，value就是字段中的内容。
+     * 表名：主键：字段名
+     * @param itemId
+     * @return
+     */
+    @Override
+    public TbItem getItemById(long itemId) {
+        //查询数据库之前先查询缓存
+        try {
+            String json = jedisClient.get(ITEM_INFO+":"+itemId+":BASE");
+            if(!StringUtils.isBlank(json)){
+                //把json转换成对象
+                return JsonUtils.jsonToPojo(json, TbItem.class);//.parseObject(json, TbItem.class);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        TbItem tbItem = itemMapper.selectByPrimaryKey(itemId);
+        //把查询结果添加到缓存
+        try {
+            //把查询结果添加到缓存
+            jedisClient.set(ITEM_INFO+":"+itemId+":BASE", JsonUtils.objectToJson(tbItem));//.toJSONString(tbItem));
+            //设置过期时间，提高缓存的利用率
+            jedisClient.expire(ITEM_INFO+":"+itemId+":BASE", ITEM_EXPIRE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return tbItem;
+    }
+
+    @Override
+    public TbItemDesc getItemDescById(long itemId) {
+        //查询数据库之前先查询缓存
+        try {
+            String json = jedisClient.get(ITEM_INFO+":"+itemId+":DESC");
+            if(!StringUtils.isBlank(json)){
+                //把json转换成对象
+                return JsonUtils.jsonToPojo(json, TbItemDesc.class);//.parseObject(json, TbItemDesc.class);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        TbItemDesc tbItemDesc = itemDescMapper.selectByPrimaryKey(itemId);
+        //把查询结果添加到缓存
+        try {
+            //把查询结果添加到缓存
+            jedisClient.set(ITEM_INFO+":"+itemId+":DESC", JsonUtils.objectToJson(tbItemDesc));//.toJSONString(tbItemDesc));
+            //设置过期时间，提高缓存的利用率
+            jedisClient.expire(ITEM_INFO+":"+itemId+":DESC", ITEM_EXPIRE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return tbItemDesc;
+    }
+
+
+
+
 }
