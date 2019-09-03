@@ -55,7 +55,7 @@
             </set>
         </constructor-arg>
     </bean>
-    <bean id="jedisClientCluster" class="com.taotao.jedis.service.impl.JedisClientCluster"></bean>
+    <bean id="jedisClientCluster" class="JedisClientCluster"></bean>
 
 
 -->

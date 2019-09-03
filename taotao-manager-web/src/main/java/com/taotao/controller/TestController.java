@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * 测试使用controller 查询当前的时间
  */
+
 @Controller
 public class TestController {
     @Autowired
@@ -20,8 +21,6 @@ public class TestController {
     @RequestMapping("/test/queryNow")
     @ResponseBody
     public String queryNow(){
-        System.out.println("wositestcontroller");
-
         return testService.queryNow();
     }
 }
